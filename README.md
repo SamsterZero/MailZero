@@ -29,7 +29,7 @@ In the future, it may expand to support general email sending and transactional 
 
 ## 📡 API Endpoints
 ### 1️⃣ Send OTP
-**Get** `/send-otp`
+**POST** `/generateOTP`
 Request Body:
 ```json
 {
