@@ -1,0 +1,15 @@
+services:
+  auto-mailer:
+    build: .
+    container_name: auto-mailer
+    ports:
+      - "8080:8080"
+    environment:
+      JAVA_OPTS: -Xms256m -Xmx512m
+      #      SPRING_PROFILES_ACTIVE: docker
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: ${EMAIL}
+      SPRING_MAIL_PASSWORD: ${EMAIL_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"

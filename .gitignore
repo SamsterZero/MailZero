@@ -1,0 +1,88 @@
+# =======================
+# Java / Spring Boot
+# =======================
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Logs
+*.log
+/app/logs/
+logs/
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# =======================
+# Build tools
+# =======================
+target/
+build/
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# =======================
+# IDEs
+# =======================
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Spring Tool Suite
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# =======================
+# OS files
+# =======================
+.DS_Store
+Thumbs.db
+
+# =======================
+# Docker / Environment
+# =======================
+.env
+docker-compose.override.yml
+.docker/
+docker-data/
