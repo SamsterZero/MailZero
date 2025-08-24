@@ -1,7 +1,9 @@
-# 📧 Spring Boot Auto Mailer with OTP Verification
+# 📧 AutoMailer – Email OTP & Transactional Email Service
 
-A **Spring Boot application** that allows you to send emails with OTPs for verification purposes.  
-This can be used to verify user email addresses during signup, password reset, or any secure action. 🔐
+A **Spring Boot application** that currently allows sending **OTP emails for verification**.  
+It can be used to verify user email addresses during signup, password reset, or other secure actions. 🔐
+
+In the future, it may expand to support general email sending and transactional notifications.
 
 ---
 
@@ -60,3 +62,14 @@ Response (if invalid/expired): "Invalid or expired OTP!"
 - Store secrets like SMTP password in .env (not in application.properties).
 - If using docker-compose, mount .env instead of hardcoding secrets.
 - Never commit .env or application.properties with real credentials to GitHub.
+
+## 🚀 Roadmap / Future Plans
+
+- [x] ✅ Send OTP emails for verification
+- [ ] 📩 Support transactional emails (welcome mail, password reset, etc.)
+- [ ] 📑 Email templates with HTML + branding
+- [ ] 🔑 Pluggable OTP strategies (numeric, alphanumeric, time-based)
+- [ ] 📊 Admin dashboard for email delivery stats & OTP success rate
+- [ ] 🌐 Multi-channel OTP (Email + SMS + WhatsApp)
+- [ ] ☁️ Cloud-native deployment (Kubernetes, Helm charts)
+- [ ] 🛡️ Secret manager integration (Vault, AWS Secrets Manager, GCP Secret Manager)
