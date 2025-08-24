@@ -1,5 +1,6 @@
 package in.vvm.AutoMailer.controller;
 
+import in.vvm.AutoMailer.dto.GenerateOtpRequest;
 import in.vvm.AutoMailer.dto.VerifyOtpRequest;
 import in.vvm.AutoMailer.service.OtpEmailService;
 import in.vvm.AutoMailer.service.OtpService;
@@ -18,11 +19,10 @@ public class OtpController {
     private final OtpService otpService;
     private final OtpEmailService otpEmailService;
 
-    @GetMapping("/generateOTP")
-    public ResponseEntity<String> generateOTP(
-            @RequestParam String email,
-            @RequestParam(required = false) String phoneNumber
-    ) {
+    @PostMapping("/generateOTP")
+    public ResponseEntity<String> generateOTP(@RequestBody GenerateOtpRequest request) {
+        String email = request.getEmail();
+        String phoneNumber = request.getPhoneNumber();
         log.trace("TRACE: Entered generateOTP with email={} and phoneNumber={}", email, phoneNumber);
         log.debug("DEBUG: Starting OTP generation process for {}", email);
 

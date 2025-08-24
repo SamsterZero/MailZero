@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class VerifyOtpRequest {
+public class GenerateOtpRequest {
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
-    @NotBlank(message = "OTP is required")
-    private String otp;
+    private String phoneNumber;
 }
