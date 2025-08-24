@@ -55,6 +55,35 @@ Response (if valid): "OTP verified successfully!"
 
 Response (if invalid/expired): "Invalid or expired OTP!"
 
+## 3️⃣ Send Welcome Email
+
+**POST** `/sendWelcomeEmail`
+Request Body:
+```json
+{
+    "email": "user@example.com",
+    "name": "User Name"
+}
+```
+
+Response: "Welcome email sent successfully!"
+
+## 4️⃣ Send Password Reset Email
+
+**POST** `/reset-password`
+
+Request Body:
+```json
+{
+    "email": "user@example.com",
+    "resetToken": "1234567890abcdef",
+    "resetLink": "https://example.com/reset-password?token=1234567890abcdef",
+    "name": "User Name"
+}
+```
+
+Response: "Password reset email sent successfully!"
+
 ---
 
 ## 🛡 Security Notes
@@ -66,7 +95,7 @@ Response (if invalid/expired): "Invalid or expired OTP!"
 ## 🚀 Roadmap / Future Plans
 
 - [x] ✅ Send OTP emails for verification
-- [ ] 📩 Support transactional emails (welcome mail, password reset, etc.)
+- [x] 📩 Support transactional emails (welcome mail, password reset, etc.)
 - [ ] 📑 Email templates with HTML + branding
 - [ ] 🔑 Pluggable OTP strategies (numeric, alphanumeric, time-based)
 - [ ] 📊 Admin dashboard for email delivery stats & OTP success rate

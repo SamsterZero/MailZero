@@ -1,10 +1,15 @@
 package in.vvm.AutoMailer.controller;
 
 import in.vvm.AutoMailer.dto.GenerateOtpRequest;
+import in.vvm.AutoMailer.dto.PasswordResetEmailRequest;
 import in.vvm.AutoMailer.dto.VerifyOtpRequest;
+import in.vvm.AutoMailer.dto.WelcomeEmailRequest;
 import in.vvm.AutoMailer.service.OtpEmailService;
 import in.vvm.AutoMailer.service.OtpService;
+import in.vvm.AutoMailer.service.TransactionalEmailService;
 import in.vvm.AutoMailer.util.OtpUtil;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,7 @@ public class OtpController {
 
     private final OtpService otpService;
     private final OtpEmailService otpEmailService;
+    private final TransactionalEmailService transactionalEmailService;
 
     @PostMapping("/generateOTP")
     public ResponseEntity<String> generateOTP(@RequestBody GenerateOtpRequest request) {
@@ -57,6 +63,36 @@ public class OtpController {
         } else {
             log.warn("WARN: Invalid or expired OTP for {}", request.getEmail());
             return ResponseEntity.badRequest().body("Invalid or expired OTP");
+        }
+    }
+
+    @PostMapping("/welcome")
+    public ResponseEntity<String> sendWelcome(@RequestBody WelcomeEmailRequest request) {
+        try {
+            transactionalEmailService.sendWelcomeEmail(request.getEmail(), request.getName());
+            return ResponseEntity.ok("Welcome email sent!");
+        } catch (MessagingException e) {
+            return ResponseEntity.internalServerError().body("Failed to send email: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> sendPasswordResetEmail(
+            @Valid @RequestBody PasswordResetEmailRequest request
+    ) {
+        try {
+            log.info("Received request to send password reset email to {}", request.getEmail());
+            String fullResetLink = request.getResetLink() + "?token=" + request.getResetToken();
+            transactionalEmailService.sendPasswordResetEmail(
+                    request.getEmail(),
+                    fullResetLink,
+                    request.getName()
+            );
+            return ResponseEntity.ok("Password reset email sent successfully to " + request.getEmail());
+        } catch (MessagingException e) {
+            log.error("Failed to send password reset email to {}", request.getEmail(), e);
+            return ResponseEntity.internalServerError()
+                    .body("Failed to send password reset email: " + e.getMessage());
         }
     }
 }
