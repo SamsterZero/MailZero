@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -40,16 +39,6 @@ public class EmailServiceImpl implements EmailService {
         helper.setText(htmlBody, true); // `true` → HTML enabled
         mailSender.send(message);
         log.info("HTML email sent successfully to {}", to);
-    }
-
-    @Override
-    public void sendWelcomeEmail(String recipient, Map<String, String> placeholders) {
-
-    }
-
-    @Override
-    public void sendPasswordResetEmail(String recipient, String resetLink) {
-
     }
 
     @Override
