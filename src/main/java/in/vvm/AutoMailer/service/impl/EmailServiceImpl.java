@@ -3,6 +3,7 @@ package in.vvm.AutoMailer.service.impl;
 import in.vvm.AutoMailer.dto.EmailRequest;
 import in.vvm.AutoMailer.dto.EmailResponse;
 import in.vvm.AutoMailer.service.EmailService;
+import in.vvm.AutoMailer.util.MaskingUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -31,32 +32,32 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendHtmlEmail(String to, String subject, String htmlBody) throws MessagingException {
-        log.debug("Preparing HTML email to={} subject={}", to, subject);
+        log.debug("Preparing HTML email to={} subject={}", MaskingUtil.maskEmail(to), subject);
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlBody, true); // `true` → HTML enabled
         mailSender.send(message);
-        log.info("HTML email sent successfully to {}", to);
+        log.info("HTML email sent successfully to {}", MaskingUtil.maskEmail(to));
     }
 
     @Override
     public EmailResponse sendEmail(EmailRequest emailRequest) {
-        log.info("Starting single email sending process. Recipients={}", emailRequest.recipients());
+        log.info("Starting single email sending process. Recipients={}", MaskingUtil.maskEmails(emailRequest.recipients()));
         List<String> successfulRecipients = new ArrayList<>();
         List<String> failedRecipients = new ArrayList<>();
 
         for (String recipient : emailRequest.recipients()) {
 
             try {
-                log.debug("Sending single email to {}", recipient);
+                log.debug("Sending single email to {}", MaskingUtil.maskEmail(recipient));
                 sendSingleEmail(recipient, emailRequest);
                 successfulRecipients.add(recipient);
-                log.info("Email sent successfully to: {}", recipient);
+                log.info("Email sent successfully to: {}", MaskingUtil.maskEmail(recipient));
             } catch (Exception e) {
                 failedRecipients.add(recipient);
-                log.error("Failed to send email to: {}", recipient, e);
+                log.error("Failed to send email to: {}", MaskingUtil.maskEmail(recipient), e);
             }
         }
 
@@ -76,17 +77,17 @@ public class EmailServiceImpl implements EmailService {
         // Send emails asynchronously for better performance
         List<CompletableFuture<Void>> futures = emailRequest.recipients().stream().map(recipient -> CompletableFuture.runAsync(() -> {
             try {
-                log.debug("Sending bulk email to {}", recipient);
+                log.debug("Sending bulk email to {}", MaskingUtil.maskEmail(recipient));
                 sendSingleEmail(recipient, emailRequest);
                 synchronized (successfulRecipients) {
                     successfulRecipients.add(recipient);
                 }
-                log.info("Bulk email sent successfully to: {}", recipient);
+                log.info("Bulk email sent successfully to: {}", MaskingUtil.maskEmail(recipient));
             } catch (Exception e) {
                 synchronized (failedRecipients) {
                     failedRecipients.add(recipient);
                 }
-                log.error("Failed to send bulk email to: {}", recipient, e);
+                log.error("Failed to send bulk email to: {}", MaskingUtil.maskEmail(recipient), e);
             }
         }, executorService)).toList();
 
@@ -100,14 +101,14 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendSingleEmail(String recipient, EmailRequest emailRequest) throws MessagingException {
-        log.debug("Preparing email to {} with subject={}", recipient, emailRequest.subject());
+        log.debug("Preparing email to {} with subject={}", MaskingUtil.maskEmail(recipient), emailRequest.subject());
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         String senderEmail = emailRequest.sender() != null ? emailRequest.sender() : defaultSender;
         if (emailRequest.sender() == null) {
-            log.warn("Sender not provided. Falling back to default sender={}", defaultSender);
+            log.warn("Sender not provided. Falling back to default sender={}", MaskingUtil.maskEmail(defaultSender));
         }
 
         helper.setFrom(senderEmail);
@@ -116,6 +117,7 @@ public class EmailServiceImpl implements EmailService {
         helper.setText(emailRequest.body(), emailRequest.isHtml());
 
         mailSender.send(message);
-        log.debug("Email dispatched to mail server for recipient={}", recipient);
+        log.debug("Email dispatched to mail server for recipient={}", MaskingUtil.maskEmail(recipient));
     }
 }
+

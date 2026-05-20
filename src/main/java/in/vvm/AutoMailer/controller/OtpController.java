@@ -4,6 +4,7 @@ import in.vvm.AutoMailer.dto.GenerateOtpRequest;
 import in.vvm.AutoMailer.dto.VerifyOtpRequest;
 import in.vvm.AutoMailer.service.OtpEmailService;
 import in.vvm.AutoMailer.service.OtpService;
+import in.vvm.AutoMailer.util.MaskingUtil;
 import in.vvm.AutoMailer.util.OtpUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,40 +27,40 @@ public class OtpController {
     public ResponseEntity<String> generateOTP(@RequestBody GenerateOtpRequest request) {
         String email = request.getEmail();
         String phoneNumber = request.getPhoneNumber();
-        log.trace("TRACE: Entered generateOTP with email={} and phoneNumber={}", email, phoneNumber);
-        log.debug("DEBUG: Starting OTP generation process for {}", email);
+        log.trace("TRACE: Entered generateOTP with email={} and phoneNumber={}", MaskingUtil.maskEmail(email), phoneNumber);
+        log.debug("DEBUG: Starting OTP generation process for {}", MaskingUtil.maskEmail(email));
 
         String otp = OtpUtil.generateOtp(6);
-        log.info("INFO: Generated OTP for {}: {}", email, otp);
+        log.info("INFO: Generated OTP for {}", MaskingUtil.maskEmail(email));
 
         otpService.saveOtp(email, otp);
-        log.debug("DEBUG: Saved OTP for {}", email);
+        log.debug("DEBUG: Saved OTP for {}", MaskingUtil.maskEmail(email));
 
         try {
             otpEmailService.sendOtp(email, otp);
-            log.info("INFO: OTP sent to {}", email);
+            log.info("INFO: OTP sent to {}", MaskingUtil.maskEmail(email));
         } catch (Exception e) {
-            log.error("ERROR: Failed to send OTP to {}. Reason: {}", email, e.getMessage(), e);
+            log.error("ERROR: Failed to send OTP to {}. Reason: {}", MaskingUtil.maskEmail(email), e.getMessage(), e);
             return ResponseEntity.internalServerError().body("Failed to send OTP: " + e.getMessage());
         }
 
-        log.trace("TRACE: Exiting generateOTP for {}", email);
+        log.trace("TRACE: Exiting generateOTP for {}", MaskingUtil.maskEmail(email));
         return ResponseEntity.ok("OTP sent successfully to " + email);
     }
 
     @PostMapping("/verify")
     public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpRequest request) {
-        log.trace("TRACE: Entered verifyOtp with email={} and otp={}", request.getEmail(), request.getOtp());
-        log.debug("DEBUG: Verifying OTP for {}", request.getEmail());
+        log.trace("TRACE: Entered verifyOtp with email={}", MaskingUtil.maskEmail(request.getEmail()));
+        log.debug("DEBUG: Verifying OTP for {}", MaskingUtil.maskEmail(request.getEmail()));
 
         boolean valid = otpService.validateOtp(request.getEmail(), request.getOtp());
 
         if (valid) {
-            log.info("INFO: OTP verified successfully for {}", request.getEmail());
+            log.info("INFO: OTP verified successfully for {}", MaskingUtil.maskEmail(request.getEmail()));
             return ResponseEntity.ok("OTP verified successfully");
         } else {
-            log.warn("WARN: Invalid or expired OTP for {}", request.getEmail());
+            log.warn("WARN: Invalid or expired OTP for {}", MaskingUtil.maskEmail(request.getEmail()));
             return ResponseEntity.badRequest().body("Invalid or expired OTP");
         }
     }
-}
+}

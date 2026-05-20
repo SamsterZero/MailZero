@@ -2,6 +2,7 @@ package in.vvm.AutoMailer.service.impl;
 
 import in.vvm.AutoMailer.service.EmailService;
 import in.vvm.AutoMailer.service.TransactionalEmailService;
+import in.vvm.AutoMailer.util.MaskingUtil;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,9 @@ public class TransactionalEmailServiceImpl implements TransactionalEmailService 
                 "<p>Get started by verifying your email and exploring our features.</p>" +
                 "<br><p>Cheers,<br>AutoMailer Team</p>";
 
-        log.info("Sending welcome email to {}", recipient);
+        log.info("Sending welcome email to {}", MaskingUtil.maskEmail(recipient));
         emailService.sendHtmlEmail(recipient, subject, body);
-        log.info("Welcome email sent successfully to {}", recipient);
+        log.info("Welcome email sent successfully to {}", MaskingUtil.maskEmail(recipient));
     }
 
     @Override
@@ -35,9 +36,10 @@ public class TransactionalEmailServiceImpl implements TransactionalEmailService 
                 "<p>Click <a href=\"" + resetLink + "\">here</a> to reset your password.</p>" +
                 "<p>If you didn’t request this, please ignore this email.</p>";
 
-        log.info("Sending password reset email to {}", recipient);
+        log.info("Sending password reset email to {}", MaskingUtil.maskEmail(recipient));
         emailService.sendHtmlEmail(recipient, subject, body);
-        log.info("Password reset email sent successfully to {}", recipient);
+        log.info("Password reset email sent successfully to {}", MaskingUtil.maskEmail(recipient));
     }
 }
+
 
